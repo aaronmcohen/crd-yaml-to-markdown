@@ -1,0 +1,12 @@
+[package]
+name = "crd_yaml_to_markdown"
+version = "0.1.0"
+authors = ["Aaron Cohen <amcohen@us.ibm.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+structopt = "0.3.21" 
+yaml-rust = "0.4.5"
+pretty_assertions = "0.6.1" 
