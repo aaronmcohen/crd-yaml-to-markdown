@@ -2,7 +2,7 @@ use crd_yaml_to_markdown;
 use std::error::Error;
 use pretty_assertions::assert_eq;
 
-const yaml: &str  = r##"
+const YAML: &str  = r##"
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -46,7 +46,7 @@ spec:
     - ct
 "##;
 
-const markdown: &str = r##"### CronTab (stable.example.com/v1)
+const MARKDOWN: &str = r##"### CronTab (stable.example.com/v1)
 
 | Name | Descrption |
 | ---- | ---------- |
@@ -57,7 +57,7 @@ const markdown: &str = r##"### CronTab (stable.example.com/v1)
 
 #[test]
 fn yaml_to_markdown(){
-    let result:Result< String,Box<Error> > = crd_yaml_to_markdown::yaml_to_markdown(yaml);
+    let result:Result< String,Box<dyn Error> > = crd_yaml_to_markdown::yaml_to_markdown(YAML);
     assert!(!result.is_err(),"Error was not thrown.");
-    assert_eq!(result.unwrap(), markdown);
+    assert_eq!(result.unwrap(), MARKDOWN);
 }

@@ -166,7 +166,7 @@ pub fn yaml_to_markdown(content: &str) -> Result<String, Box<dyn Error>> {
                     None => String::new(),
                 };
             markdown.push_str(desciption.as_str());
-            markdown.push_str("\n| Name | Descrption |\n");
+            markdown.push_str("| Name | Descrption |\n");
             markdown.push_str("| ---- | ---------- |\n");
             let open_api_v3_schema_properties: &yaml_rust::yaml::Hash = open_api_v3_schema
                 [&Yaml::String(String::from("properties"))]
@@ -188,9 +188,25 @@ pub fn yaml_to_markdown(content: &str) -> Result<String, Box<dyn Error>> {
             let crd_spec_properties: &yaml_rust::yaml::Hash = crd_spec
                 [&Yaml::String(String::from("properties"))]
                 .as_hash()
-                .ok_or("OpenSchema spec is required and not present.")?;
+                .ok_or("OpenSchema spec properties are required and not present.")?;
             let row_data: String = open_api_to_table_row("", crd_spec_properties)?;
             markdown.push_str(row_data.as_str());
+            if crd_properties.contains_key(&Yaml::String(String::from("status"))) {
+
+                let crd_status: &yaml_rust::yaml::Hash = crd_properties
+                    [&Yaml::String(String::from("status"))]
+                    .as_hash()
+                    .ok_or("OpenSchema status is required and not present.")?;
+                let crd_status_properties: &yaml_rust::yaml::Hash = crd_status
+                    [&Yaml::String(String::from("properties"))]
+                    .as_hash()
+                    .ok_or("OpenSchema status properties are required and not present.")?;
+                markdown.push_str("\n\n#### Status");
+                markdown.push_str("\n| Name | Descrption |\n");
+                markdown.push_str("| ---- | ---------- |\n");
+                let status_row_data: String = open_api_to_table_row("", crd_status_properties)?;
+                markdown.push_str(status_row_data.as_str());
+            }
         }
     }
     Ok(markdown)
