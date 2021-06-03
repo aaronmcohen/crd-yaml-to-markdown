@@ -11,12 +11,17 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        target: 
+          - x86_64-apple-darwin
+          - aarch64-apple-darwin
     steps:
     - uses: actions/checkout@v2
+    - name: install target
+      run: rustup target install ${{ matrix.target }}
     - name: Build
-      run: cargo build --verbose
+      run: cargo build --verbose --all-targets
     - name: Run tests
       run: cargo test --verbose
