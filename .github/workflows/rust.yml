@@ -33,14 +33,14 @@ jobs:
     strategy:
       matrix:
         target:
-          - x86_64-apple-darwin
-          - aarch64-apple-darwin
+        - x86_64-apple-darwin
+        - aarch64-apple-darwin
     steps:
     - uses: actions/checkout@v2
     - name: install target
-      run: rustup target install ${{ matrix.target }}
+      run: rustup target add ${{ matrix.target }}
     - name: Build
-      run: cargo build --verbose --all-targets --release
+      run: cargo build --verbose --all-targets --release --target ${{ matrix.target }}
     - name: Run tests
       run: cargo test --verbose
     - name: Upload Release Asset
