@@ -37,10 +37,16 @@ jobs:
         - aarch64-apple-darwin
     steps:
     - uses: actions/checkout@v2
-    - name: Update rust
-      run: rustup update && rustup toolchain install nightly && rustup default nightly
-    - name: install target
-      run: rustup target add ${{ matrix.target }}
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: nightly
+        target: ${{ matrix.target }}
+        override: true
+    - uses: actions-rs/cargo@v1
+      with:
+        use-cross: true
+        command: build
+        args: --target ${{ matrix.target }}
     - name: Build
       run: cargo build --verbose --all-targets --release --target ${{ matrix.target }}
     - name: Run tests
