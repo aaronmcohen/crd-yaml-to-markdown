@@ -37,6 +37,8 @@ jobs:
         - aarch64-apple-darwin
     steps:
     - uses: actions/checkout@v2
+    - name: Update rust
+      run: rustup update && rustup toolchain install nightly && rustup default nightly
     - name: install target
       run: rustup target add ${{ matrix.target }}
     - name: Build
