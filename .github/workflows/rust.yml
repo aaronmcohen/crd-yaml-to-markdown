@@ -39,6 +39,10 @@ jobs:
         - x86_64-apple-darwin
         - aarch64-apple-darwin
     steps:
+    - name: Update
+      run: apt-get update
+    - name: install dependencies
+      run: apt-get install -y build-essential
     - uses: actions/checkout@v2
     - uses: actions-rs/toolchain@v1
       with:
