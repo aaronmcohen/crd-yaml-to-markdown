@@ -47,8 +47,9 @@ jobs:
         override: true
     - uses: actions-rs/cargo@v1
       with:
-        use-cross: false
+        use-cross: true
         command: build
+        toolchain: nightly
         args: --target ${{ matrix.target }}
     - name: Build
       run: cargo build --verbose --all-targets --release --target ${{ matrix.target }}
