@@ -56,7 +56,7 @@ jobs:
         toolchain: nightly
         args: --target ${{ matrix.target }}
     - name: Build
-      run: cargo build --verbose --all-targets --release --target ${{ matrix.target }}
+      run: cargo build --verbose  --release --target ${{ matrix.target }}
     - name: Run tests
       run: cargo test --verbose
     - name: Upload Release Asset
