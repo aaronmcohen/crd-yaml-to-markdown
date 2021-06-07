@@ -43,9 +43,9 @@ jobs:
       run: sudo apt-get update && sudo apt-get upgrade
     - uses: actions/checkout@v2
     - name: Update RustUp
-      run: sudo rustup update
+      run: rustup update
     - name: Install nightly toolchain
-      run: sudo rustup toolchain add nightly --profile complete --target ${{ matrix.target }}
+      run: rustup toolchain add nightly --profile complete --target ${{ matrix.target }}
     - name: Run tests
       run: cargo test --verbose
     - name: Build
