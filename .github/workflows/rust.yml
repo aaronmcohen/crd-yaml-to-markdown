@@ -36,18 +36,16 @@ jobs:
     strategy:
       matrix:
         target:
-        - x86_64-apple-darwin
-        - aarch64-apple-darwin
+        - "x86_64-apple-darwin"
+        - "aarch64-apple-darwin"
     steps:
     - name: Update
-      run: sudo apt-get update
-    - name: install dependencies
-      run: sudo apt-get install -y build-essential
+      run: sudo apt-get update && sudo apt-get upgrade
     - uses: actions/checkout@v2
     - uses: actions-rs/toolchain@v1
       with:
         toolchain: nightly
-        target: "${{ matrix.target }}"
+        target: ${{ matrix.target }}
         override: true
         profile: minimal
     - uses: actions-rs/cargo@v1
@@ -55,7 +53,7 @@ jobs:
         use-cross: false
         command: build
         toolchain: nightly
-        args: --target="${{ matrix.target }}"  --release
+        args: --target=${{ matrix.target }}  --release
     - name: Run tests
       run: cargo test --verbose
     - name: Upload Release Asset
