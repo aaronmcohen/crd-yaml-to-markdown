@@ -40,18 +40,16 @@ jobs:
         - "aarch64-apple-darwin"
     steps:
     - name: Update
-      run: sudo apt-get update && sudo apt-get upgrade && sudo apt-get install build-essential
+      run: sudo apt-get update && sudo apt-get upgrade
     - uses: actions/checkout@v2
-    - name: Install rustup
-      run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
     - name: Update RustUp
-      run: source $HOME/.cargo/env && rustup update
+      run: sudo rustup update
     - name: Install nightly toolchain
-      run: source $HOME/.cargo/env && rustup toolchain add nightly --profile complete --target ${{ matrix.target }}
+      run: sudo rustup toolchain add nightly --profile complete --target ${{ matrix.target }}
     - name: Run tests
-      run: source $HOME/.cargo/env && cargo test --verbose
+      run: cargo test --verbose
     - name: Build
-      run: source $HOME/.cargo/env && cargo build --release --all-targets --all-features --verbose --target ${{ matrix.target }}
+      run: cargo build --release --all-targets --all-features --verbose --target ${{ matrix.target }}
     - name: Upload Release Asset
       id: upload-release-asset
       uses: actions/upload-release-asset@v1
