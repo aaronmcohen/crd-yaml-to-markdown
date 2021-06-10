@@ -30,14 +30,14 @@ jobs:
           Automated release.
         draft: false
         prerelease: true
-  build:
+  build_linux:
     runs-on: ubuntu-latest
     needs: create_release
     strategy:
       matrix:
         target:
-        - "x86_64-apple-darwin"
-        - "aarch64-apple-darwin"
+        - "powerpc64le-unknown-linux-gnu"
+        - "s390x-unknown-linux-gnu"
     steps:
     - name: Update
       run: sudo apt-get update && sudo apt-get upgrade
