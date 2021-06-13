@@ -33,25 +33,14 @@ jobs:
   build_linux:
     runs-on: ubuntu-latest
     needs: create_release
-    strategy:
-      matrix:
-        target:
-        - "powerpc64le-unknown-linux-gnu"
-        - "s390x-unknown-linux-gnu"
     steps:
     - name: Update
       run: sudo apt-get update && sudo apt-get upgrade
     - uses: actions/checkout@v2
     - name: Update RustUp
       run: rustup update
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v1
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-    - name: install cross
-      run: cargo install cross
     - name: Build
-      run: cross build --target  --target ${{ matrix.target }}
+      run: cross build --all-targets --release --verbose
     - name: Run tests
       run: cross test --verbose
     - name: Upload Release Asset
@@ -62,5 +51,47 @@ jobs:
       with:
         upload_url: ${{ needs.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
         asset_path: target/release/crd_yaml_to_markdown
-        asset_name: crd-yaml-to-markdown-${{ matrix.target }}
+        asset_name: crd-yaml-to-markdown-linux
+        asset_content_type: application/octet-stream
+  build_windows:
+    runs-on: windows-latest
+    needs: create_release
+    steps:
+    - uses: actions/checkout@v2
+    - name: Update RustUp
+      run: rustup update
+    - name: Build
+      run: cross build --all-targets --release --verbose
+    - name: Run tests
+      run: cross test --verbose
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+        asset_path: target/release/crd_yaml_to_markdown
+        asset_name: crd-yaml-to-markdown-windows
+        asset_content_type: application/octet-stream
+  build_macos:
+    runs-on: macos-latest
+    needs: create_release
+    steps:
+    - uses: actions/checkout@v2
+    - name: Update RustUp
+      run: rustup update
+    - name: Build
+      run: cross build --all-targets --release --verbose
+    - name: Run tests
+      run: cross test --verbose
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+        asset_path: target/release/crd_yaml_to_markdown
+        asset_name: crd-yaml-to-markdown-osx
         asset_content_type: application/octet-stream
