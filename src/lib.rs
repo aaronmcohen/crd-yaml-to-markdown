@@ -185,14 +185,15 @@ pub fn yaml_to_markdown(content: &str) -> Result<String, Box<dyn Error>> {
                 [&Yaml::String(String::from("spec"))]
                 .as_hash()
                 .ok_or("OpenSchema spec is required and not present.")?;
-            let crd_spec_properties: &yaml_rust::yaml::Hash = crd_spec
-                [&Yaml::String(String::from("properties"))]
-                .as_hash()
-                .ok_or("OpenSchema spec properties are required and not present.")?;
-            let row_data: String = open_api_to_table_row("", crd_spec_properties)?;
-            markdown.push_str(row_data.as_str());
+            if crd_properties.contains_key(&Yaml::String(String::from("properties"))) {
+                let crd_spec_properties: &yaml_rust::yaml::Hash = crd_spec
+                    [&Yaml::String(String::from("properties"))]
+                    .as_hash()
+                    .ok_or("OpenSchema spec properties are required and not present.")?;
+                let row_data: String = open_api_to_table_row("", crd_spec_properties)?;
+                markdown.push_str(row_data.as_str());
+            }
             if crd_properties.contains_key(&Yaml::String(String::from("status"))) {
-
                 let crd_status: &yaml_rust::yaml::Hash = crd_properties
                     [&Yaml::String(String::from("status"))]
                     .as_hash()
