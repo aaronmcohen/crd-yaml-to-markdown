@@ -15,9 +15,37 @@ fn open_api_to_table_row(
                 format!("{}.{}", prefix, key_string)
             }
         };
-        let value_type: &str = value.as_hash().unwrap()[&Yaml::String(String::from("type"))]
-            .as_str()
-            .ok_or("Could not fetch property type")?;
+        let mut value_type: &str = "";
+        if value
+            .as_hash()
+            .unwrap()
+            .contains_key(&Yaml::String(String::from("type")))
+        {
+            value_type = value.as_hash().unwrap()[&Yaml::String(String::from("type"))]
+                .as_str()
+                .ok_or("Could not fetch property type")?;
+        } else if value
+            .as_hash()
+            .unwrap()
+            .contains_key(&Yaml::String(String::from("anyOf")))
+        {
+            let values: &yaml_rust::yaml::Array = value.as_hash().unwrap()
+                [&Yaml::String(String::from("anyOf"))]
+                .as_vec()
+                .ok_or("Could not fetch property anyOf")?;
+            for yaml_value in values {
+                let value_type_part: &str = yaml_value.as_hash().unwrap()
+                    [&Yaml::String(String::from("type"))]
+                    .as_str()
+                    .ok_or("Could not fetch property type")?;
+                value_type = match value_type {
+                    "" => value_type_part,
+                    "object" => "object",
+                    _ => value_type_part,
+                }
+            }
+        } else {
+        }
         match value_type {
             "object" => {
                 match value
@@ -185,13 +213,15 @@ pub fn yaml_to_markdown(content: &str) -> Result<String, Box<dyn Error>> {
                 [&Yaml::String(String::from("spec"))]
                 .as_hash()
                 .ok_or("OpenSchema spec is required and not present.")?;
-            if crd_properties.contains_key(&Yaml::String(String::from("properties"))) {
+            if crd_spec.contains_key(&Yaml::String(String::from("properties"))) {
                 let crd_spec_properties: &yaml_rust::yaml::Hash = crd_spec
                     [&Yaml::String(String::from("properties"))]
                     .as_hash()
                     .ok_or("OpenSchema spec properties are required and not present.")?;
                 let row_data: String = open_api_to_table_row("", crd_spec_properties)?;
                 markdown.push_str(row_data.as_str());
+            } else {
+                println!("WARNING: spec does not contain properties.");
             }
             if crd_properties.contains_key(&Yaml::String(String::from("status"))) {
                 let crd_status: &yaml_rust::yaml::Hash = crd_properties
